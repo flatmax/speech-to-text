@@ -1,6 +1,10 @@
 # Speech-to-Text Converter
 
-A Python-based speech recognition tool that uses Mozilla's DeepSpeech engine to convert speech to text. This tool supports both real-time microphone input and audio file processing.
+This Python-based speech recognition tool combines Mozilla's DeepSpeech engine for speech-to-text conversion with WebRTC Voice Activity Detection (VAD) for intelligent recording control. The WebRTC VAD system efficiently detects when speech has stopped, automatically ending the recording session after a configurable period of silence.
+
+A key feature is the automatic recording termination after detecting silence, which helps create cleaner audio segments and prevents unnecessarily long recordings. The VAD system operates in real-time, analyzing audio frames to determine if they contain speech, making it ideal for interactive applications.
+
+The tool supports both real-time microphone input and audio file processing.
 
 ## Features
 
@@ -13,7 +17,7 @@ A Python-based speech recognition tool that uses Mozilla's DeepSpeech engine to 
 ## Prerequisites
 
 - Python 3.8 - 3.11 (DeepSpeech 0.9.3 is not compatible with Python 3.12)
-- Conda package manager
+- Conda package manager (optional)
 - A microphone for real-time speech recognition
 - PortAudio development files (for PyAudio)
 
@@ -22,7 +26,7 @@ A Python-based speech recognition tool that uses Mozilla's DeepSpeech engine to 
 On Ubuntu/Debian, install PortAudio development files:
 ```bash
 sudo apt-get update
-sudo apt-get install portaudio19-dev python3-pyaudio
+sudo apt-get install portaudio19-dev
 ```
 
 On Fedora/RHEL:
