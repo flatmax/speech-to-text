@@ -5,8 +5,8 @@ import pyaudio
 import time
 
 class SpeechToText:
-    def __init__(self, model_path='deepspeech-0.9.3-models.pbmm', 
-                 scorer_path='deepspeech-0.9.3-models.scorer',
+    def __init__(self, model_path='models/deepspeech-0.9.3-models.pbmm', 
+                 scorer_path='models/deepspeech-0.9.3-models.scorer',
                  sample_rate=16000):
         """
         Initialize the speech to text converter

@@ -1,0 +1,5 @@
+.aider*
+.env
+# DeepSpeech model files
+models/*.pbmm
+models/*.scorer
