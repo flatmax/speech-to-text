@@ -5,6 +5,8 @@ import pyaudio
 import time
 import webrtcvad
 import collections
+from colorama import init, Fore, Back, Style
+init()
 
 class SpeechToText:
     def __init__(self, model_path='models/deepspeech-0.9.3-models.pbmm', 
@@ -55,15 +57,12 @@ class SpeechToText:
             frames_per_buffer=frame_size
         )
         
-        print("Recording... (speak to begin)")
+        print("Recording...")
         frames = []
         silent_frames = 0
         max_silent_frames = int(silence_duration * 1000 / frame_duration_ms)
         start_time = time.time()
-        
-        # Use a ring buffer to track if we've started speaking
-        ring_buffer = collections.deque(maxlen=max_silent_frames)
-        recording_started = False
+        recording_started = True
         
         while True:
             if time.time() - start_time > max_duration:
@@ -72,23 +71,25 @@ class SpeechToText:
                 
             frame = stream.read(frame_size)
             is_speech = vad.is_speech(frame, self.sample_rate)
-            print(f"Speech detected: {is_speech} | Silent frames: {silent_frames}/{max_silent_frames}", end='\r')
             
-            if not recording_started:
-                ring_buffer.append(frame)
-                num_voiced = len([f for f in range(len(ring_buffer)) if vad.is_speech(ring_buffer[f], self.sample_rate)])
-                if num_voiced > 0.5 * ring_buffer.maxlen:
-                    recording_started = True
-                    print("\nSpeech detected, recording...")
-                    frames.extend(list(ring_buffer))
-                continue
+            # Calculate volume level (0-20 range)
+            volume = min(20, int(np.abs(np.frombuffer(frame, dtype=np.int16)).mean() / 200))  # Increased sensitivity
+            volume_bar = Fore.GREEN + "█" * volume + " " * (20 - volume)
+            
+            # Calculate silence progress
+            silence_progress = int(20 * silent_frames / max_silent_frames)
+            silence_bar = Fore.RED + "█" * silence_progress + " " * (20 - silence_progress)
             
             frames.append(frame)
             
-            if is_speech:
-                silent_frames = 0
-            else:
-                silent_frames += 1
+            if recording_started:
+                print(f"Volume: {volume_bar} | Silence: {silence_bar}{Style.RESET_ALL}", end='\r')
+                
+                # Update silent frames counter
+                if is_speech:
+                    silent_frames = 0
+                else:
+                    silent_frames += 1
                 
             if silent_frames >= max_silent_frames and recording_started:
                 print("\nSilence detected, stopping recording")

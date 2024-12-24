@@ -2,3 +2,4 @@ deepspeech==0.9.3
 numpy==1.24.3
 PyAudio==0.2.13
 webrtcvad==2.0.10
+colorama==0.4.6
